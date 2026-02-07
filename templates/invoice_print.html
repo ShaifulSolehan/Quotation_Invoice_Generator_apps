@@ -68,6 +68,7 @@
     .invoice-table th {
       background: #f8f9fa;
       text-align: left;
+      font-weight: bold;
     }
 
     .invoice-table td:last-child {
@@ -75,13 +76,13 @@
     }
 
     .total-row td {
-      font-weight: bold;
       border-top: 1px solid #000;
+      font-weight: bold;
     }
 
     .note {
       font-style: italic;
-      font-size: 11px;
+      font-size: 12px;
       margin-top: 8px;
       line-height: 1.3;
     }
@@ -140,7 +141,8 @@
             <p><strong>Invoice No:</strong> {{ invoice.invoice_no }}<br>
             <strong>Date:</strong> {{ invoice.date }}</p>
           {% else %}
-            <p><strong>Date:</strong> {{ invoice.date }}</p>
+            <p><strong>Quotation No:</strong> {{ invoice.invoice_no }}<br>
+            <strong>Date:</strong> {{ invoice.date }}</p>
           {% endif %}
         </span>
       </div>
@@ -149,14 +151,18 @@
     <p class="ms-2" style="font-size: 0.9rem; font-weight: 500; margin-bottom: 0px;">
         <strong>Issued to:</strong><br></p>
     <p class="ms-2" style="font-size: 0.85rem;">
-        {{ invoice.customer_name }}<br><br>
+        <span style="text-transform: capitalize;">{{ invoice.customer_name }}</span><br><br>
+        {% if invoice.company_name %}
+        <strong style="text-transform: uppercase; font-weight: bold;">{{ invoice.company_name }}</strong>
+        {% endif %}
+        <br>
         {{ invoice.customer_address | replace('\n', '<br>') | safe }}
     </p>
     <table class="invoice-table">
         <thead>
             <tr>
-            <th>Description</th>
-            <th style="text-align: right;">Price (RM)</th>
+            <th>DESCRIPTION</th>
+            <th style="text-align: right;">PRICE (RM)</th>
             </tr>
         </thead>
         <tbody>
@@ -170,22 +176,40 @@
                 Event: {{ invoice.event }}<br>
                 Venue: {{ invoice.event_venue }}<br>
                 Date: {{ invoice.event_date }}</span><br><br>
-                <p class="note mt-2">NOTE: 50% deposit of payment need to be done for booking and the rest need to be paid on the day of the event.</p>
+                <p class="note mt-2">NOTE: The agreed deposit payment need to be done for booking <br> and the rest is paid on the day of the event.</p>
             </td>
-            <td style="text-align: right; vertical-align: top;">{{ invoice.price }}</td>
+            <td style="text-align: right; vertical-align: top;">{{ "{:,.2f}".format(invoice.price|float) }}</td>
             </tr>
             <tr class="total-row">
-            <td style="text-align: right;"><strong>Total:</strong></td>
-            <td style="text-align: right; white-space: nowrap;"><strong>RM {{ invoice.price }}</strong></td>
+            <td style="text-align: left;">TOTAL</td>
+            <td style="text-align: right; white-space: nowrap;">RM {{ "{:,.2f}".format(invoice.price|float) }}</td>
             </tr>
         </tbody>
     </table>
 
     <div class="bank-details">
-      <p><strong>ACC NO:</strong> 551249594824<br>
-      <strong>ACC HOLDER:</strong> RAHMAD MEGA ENTERTAINMENT<br>
-      <strong>BANK NAME:</strong> MALAYAN BANKING BERHAD (MAYBANK)<br>
-      <strong>AMOUNT (RM):</strong> {{ invoice.price_words }}</p>
+      <table style="border: none; font-size: 0.85rem;">
+        <tr>
+          <td style="border: none; padding: 2px 0; width: 120px;"><strong>ACC NO</strong></td>
+          <td style="border: none; padding: 2px 0; width: 10px;">:</td>
+          <td style="border: none; padding: 2px 0;">551249594824</td>
+        </tr>
+        <tr>
+          <td style="border: none; padding: 2px 0;"><strong>ACC HOLDER</strong></td>
+          <td style="border: none; padding: 2px 0;">:</td>
+          <td style="border: none; padding: 2px 0;">RAHMAD MEGA ENTERTAINMENT</td>
+        </tr>
+        <tr>
+          <td style="border: none; padding: 2px 0;"><strong>BANK NAME</strong></td>
+          <td style="border: none; padding: 2px 0;">:</td>
+          <td style="border: none; padding: 2px 0;">MALAYAN BANKING BERHAD (MAYBANK)</td>
+        </tr>
+        <tr>
+          <td style="border: none; padding: 2px 0;"><strong>AMOUNT (RM)</strong></td>
+          <td style="border: none; padding: 2px 0;">:</td>
+          <td style="border: none; padding: 2px 0;">{{ invoice.price_words }}</td>
+        </tr>
+      </table>
     </div>
 
     <div class="footer">
