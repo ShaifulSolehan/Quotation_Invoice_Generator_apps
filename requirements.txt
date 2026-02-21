@@ -1,4 +1,5 @@
 Flask==3.0.0
-weasyprint==60.2
+weasyprint==62.3
+pydyf==0.10.0
 num2words==0.5.13
 gunicorn==21.2.0

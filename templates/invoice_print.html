@@ -124,7 +124,7 @@
     <div class="invoice-header">
         <div class="d-flex align-items-center mb-4 w-100" style="gap: 10px;">
         <div>
-            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RM Logo" style="max-height: 130px;">
+          <img src="{{ invoice.logo_uri }}" alt="RM Logo" style="max-height: 130px;">
         </div>
         <div class="company-info">
             <p class="mb-0" style="font-size:1rem;">
@@ -217,7 +217,7 @@
     </div>
 
     <div class="signature">
-      <img src="{{ url_for('static', filename='img/signature.png') }}" alt="Signature" style="max-height: 60px;"><br>
+      <img src="{{ invoice.signature_uri }}" alt="Signature" style="max-height: 60px;"><br>
       <strong>Faizah Ahmad</strong><br>
       Marketing Manager
     </div>

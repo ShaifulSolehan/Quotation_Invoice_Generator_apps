@@ -1,11 +1,16 @@
+from pathlib import Path
 from flask import Flask, render_template, request, make_response
 from weasyprint import HTML
-from io import BytesIO
+from weasyprint.text.fonts import FontConfiguration
 from num2words import num2words
 from datetime import datetime
 import os
 
 app = Flask(__name__)
+
+# Pre-configure fonts (speeds up PDF generation)
+font_config = FontConfiguration()
+BASE_DIR = Path(__file__).resolve().parent
 
 def get_next_invoice_number():
     counter_file = 'invoice_counter.txt'
@@ -73,21 +78,28 @@ def generate_invoice():
         "customer_name": request.form['customer_name'],
         "company_name": request.form.get('company_name') or None,
         "customer_address": request.form['customer_address'],
-        #"description": request.form['description'],
         "price": request.form['price'],
-        "price_words":price_words,
+        "price_words": price_words,
         "song": request.form.get('song') or None,
         "event": request.form['event'],
         "event_venue": request.form['event_venue'],
         "event_date": event_date,
+        "logo_uri": BASE_DIR / "static" / "img" / "logo.png",
+        "signature_uri": BASE_DIR / "static" / "img" / "signature.png",
     }
 
     # Render template
     rendered = render_template("invoice_print.html", invoice=invoice)
 
-    # Convert to PDF
-    pdf = HTML(string=rendered, base_url=request.root_url).write_pdf()
-
+    # Convert to PDF with filesystem base_url
+    pdf = HTML(
+        string=rendered,
+        base_url=BASE_DIR.as_uri()
+    ).write_pdf(
+        font_config=font_config,
+        optimize_size=('fonts', 'images')
+    )
+    
     # Set filename
     if doc_type == "INVOICE":
         filename = f"INVOICE_{doc_number}.pdf"
